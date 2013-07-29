@@ -1,0 +1,4 @@
+db_server: localhost
+db_user:
+db_password:
+debug: true
