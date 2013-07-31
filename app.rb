@@ -21,6 +21,7 @@ class App < Sinatra::Base
 
 	configure :development do
 		require 'sinatra/reloader'
+		register Sinatra::Reloader
 		["models", "helpers", "controllers", "routes"].each do |folder|
 			Dir.glob("#{folder}/*.rb").each { |file| also_reload file }
 		end
