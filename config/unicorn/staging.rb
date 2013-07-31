@@ -28,7 +28,7 @@ worker_processes 4
 listen "/tmp/appname.sock", :backlog => 64
 listen 8080, :tcp_nopush => true
 
-CAP_PATH = "/u/apps/app-name"
+CAP_PATH = "/u/apps/appname"
 APP_PATH = "#{CAP_PATH}/current"
 working_directory APP_PATH
 
