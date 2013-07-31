@@ -4,15 +4,16 @@ set :default_stage, 'development'
 require 'capistrano/ext/multistage'
 
 #app_dir = "/u/apps/appname"
-set :application, "appname"
-set :repository,  "git@github.com:user/appname"
 #set :deploy_to,		app_dir
-#set :unicorn_pid, "#{app_dir}/shared/pids/unicorn.pid"
-set :ssh_options, { forward_agent: true } # , port: 123
+set :application,	"appname"
+set :repository,	"git@github.com:user/appname"
+#set :unicorn_pid,	"#{app_dir}/shared/pids/unicorn.pid"
+set :ssh_options,	{ forward_agent: true } # , port: 123
 set :deploy_via,	:remote_cache
-set :branch, 'develop'
-set :user, 'deploy_user'
-set :use_sudo, false
+set :branch,		'develop'
+set :user,			'deploy_user'
+set :use_sudo,		false
+
 # Rids us of a number of annoying errors.
 set :normalize_asset_timestamps, false
 
@@ -35,6 +36,11 @@ namespace :appname do
 	task :git_tag do  # Create a nice environment-date-time tag for the release.
 		date = nil
 		environment = fetch(:stage).to_s
+
+		unless fetch(:stages).include? environment
+			raise Exception.new("#{environment} is not a valid environment")
+		end
+
 		IO.popen("git log -n 1 --date=iso") do |git_log|
 			git_log.each do |line|
 				if line =~ /Date:\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/
@@ -49,14 +55,9 @@ namespace :appname do
 			raise Exception.new("#{date_str} is an invalid date string.")
 		end
 
-		unless fetch(:stages).include? environment
-			raise Exception.new("#{environment} is not a valid environment")
-		end
-
 		system "git tag #{tag}"
 		system "git push origin --tags"
 	end
-
 end
 
 after "deploy:restart", "deploy:cleanup"
